@@ -46,7 +46,56 @@ namespace Hacker_Tracer
             ("Отключение системы обнаружения вторжений", true),
             ("Загрузка параметров операции",       true),
         };
-    }
+
+            foreach (var (msg, ok) in bootSteps)
+            {
+                SetGray();
+                Console.Write($"  [ .... ] {msg}");
+                Thread.Sleep(120 + new Random().Next(80));
+                Console.Write("\r");
+                if (ok) SetGreen();
+                else SetRed();
+                Console.WriteLine($"  [  OK  ] {msg}");
+            }
+
+            Thread.Sleep(400);
+            SetYellow();
+            Console.WriteLine();
+            TypeLine("  ВНИМАНИЕ: Несанкционированный доступ. Вся активность отслеживается.", 10, ConsoleColor.Red);
+            Thread.Sleep(200);
+            TypeLine("  (Шутка. Добро пожаловать, Призрак.)", 14, ConsoleColor.DarkGray);
+            Thread.Sleep(500);
+            Console.WriteLine();
+            SetGreen();
+            TypeLine("  Введи  help  для списка доступных команд.", 14);
+            Console.WriteLine();
+            Reset();
+        }
+
+
+        public static void Type(string text, int delayMs = 18, ConsoleColor? color = null)
+        {
+            var prev = Console.ForegroundColor;
+            if (color.HasValue) Console.ForegroundColor = color.Value;
+            foreach (char c in text)
+            {
+                Console.Write(c);
+                if (delayMs > 0 && c != ' ')
+                    Thread.Sleep(delayMs);
+            }
+            Console.ForegroundColor = prev;
+        }
+
+
+        public static string? Prompt(string path)
+        {
+            SetGreen();
+            Console.Write($"\n[ПРИЗРАК@даркнет {path}]$ ");
+            SetWhite();
+            var input = Console.ReadLine();
+            Reset();
+            return input;
+        }
 
         public static void Print(string text, ConsoleColor? color = null)
         {
@@ -56,6 +105,19 @@ namespace Hacker_Tracer
             Console.ForegroundColor = prev;
         }
 
-        public static void Error(string msg) => Print($"  [!] {msg}", ConsoleColor.Red);
+        public static void TypeLine(string text, int delayMs = 18, ConsoleColor? color = null)
+        {
+            Type(text, delayMs, color);
+            Console.WriteLine();
+        }
+
+        public static void Divider(char ch = '─', int width = 60, ConsoleColor? color = null)
+        {
+            Print(new string(ch, width), color ?? ConsoleColor.DarkGreen);
+        }
+
+        public static void Error(string msg) => Print($"  [!] {msg}", ConsoleColor.Red);        public static void PrintBlank() => Console.WriteLine();
+        public static void Info(string msg) => Print($"  [*] {msg}", ConsoleColor.Cyan);
+        public static void Warn(string msg) => Print($"  [~] {msg}", ConsoleColor.Yellow);
     }
 }
